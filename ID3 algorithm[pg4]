@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -- coding: utf-8 --
-"""
-Created on Wed Oct  4 09:54:57 2023
-
-@author: jit
-"""
-
 import pandas as pd 
 import numpy as np
 dataset=pd.read_csv('ID3.csv',names=['outlook','temperature','humidity','wind','class',])
