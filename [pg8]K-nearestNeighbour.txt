@@ -1,44 +1,30 @@
-3#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Nov 22 14:18:45 2023
 
-@author: jit
-"""
-
-#import numpy as np
 import pandas as pd
-# Importing the dataset
+
 dataset = pd.read_csv('Iris.csv')
 #dataset.groupby('species').size()
-#Dividing data into features and labels
+
 feature_columns = ['SepalLengthCm','SepalWidthCm', 'PetalLengthCm','PetalWidthCm']
 X = dataset[feature_columns].values
 y = dataset['Species'].values
-"""
-KNeighborsClassifier does not accept string labels.
-We need to use LabelEncoder to transform them into numbers.
-Iris-setosa correspond to 0,
-Iris-versicolor correspond to 1 and
-Iris-virginica correspond to 2.
-"""
+
 from sklearn.preprocessing import LabelEncoder
 le = LabelEncoder()
 y = le.fit_transform(y)
-#Spliting dataset into training set and test set
+
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
-# Fitting K-NN to the Training set
+
 from sklearn.neighbors import KNeighborsClassifier
 classifier = KNeighborsClassifier(n_neighbors = 3)
-# Fitting the model
+
 classifier.fit(X_train, y_train)
-# Predicting the Test set results
+
 y_pred = classifier.predict(X_test)
 print("y_pred y_test")
 for i in range(len(y_pred)):
     print(y_pred[i], " ", y_test[i])
-# Making the Confusion Matrix
+
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_test, y_pred)
 print("Confusion Matrix:")
