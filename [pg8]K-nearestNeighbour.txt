@@ -2,7 +2,7 @@
 import pandas as pd
 
 dataset = pd.read_csv('Iris.csv')
-#dataset.groupby('species').size()
+
 
 feature_columns = ['SepalLengthCm','SepalWidthCm', 'PetalLengthCm','PetalWidthCm']
 X = dataset[feature_columns].values
