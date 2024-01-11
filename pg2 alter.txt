@@ -1,0 +1,107 @@
+Certainly! Here's a simplified version of your program with shorter variable names:
+
+```python
+def rec_ao_star(node):
+    global final_path
+    print("Expanding Node:", node)
+    and_nodes = []
+    or_nodes = []
+    if node in all_nodes:
+        and_nodes = all_nodes[node].get('AND', [])
+        or_nodes = all_nodes[node].get('OR', [])
+    if not and_nodes and not or_nodes:
+        return
+
+    solvable = False
+    marked = {}
+
+    while not solvable:
+        if len(marked) == len(and_nodes) + len(or_nodes):
+            min_cost, min_cost_group = least_cost_group(and_nodes, or_nodes, {})
+            solvable = True
+            change_heuristic(node, min_cost)
+            optimal_child_group[node] = min_cost_group
+            continue
+        min_cost, min_cost_group = least_cost_group(and_nodes, or_nodes, marked)
+        is_expanded = expand_nodes(min_cost_group)
+        if is_expanded:
+            min_cost_verify, min_cost_group_verify = least_cost_group(and_nodes, or_nodes, {})
+            if min_cost_group == min_cost_group_verify:
+                solvable = True
+                change_heuristic(node, min_cost_verify)
+                optimal_child_group[node] = min_cost_group
+        else:
+            solvable = True
+            change_heuristic(node, min_cost)
+            optimal_child_group[node] = min_cost_group
+        marked[min_cost_group] = 1
+    return heuristic(node)
+
+
+def least_cost_group(and_nodes, or_nodes, marked):
+    node_wise_cost = {}
+    for node_pair in and_nodes:
+        if not node_pair[0] + node_pair[1] in marked:
+            cost = heuristic(node_pair[0]) + heuristic(node_pair[1]) + 2
+            node_wise_cost[node_pair[0] + node_pair[1]] = cost
+    for node in or_nodes:
+        if node not in marked:
+            cost = heuristic(node) + 1
+            node_wise_cost[node] = cost
+    min_cost = float('inf')
+    min_cost_group = None
+    for cost_key in node_wise_cost:
+        if node_wise_cost[cost_key] < min_cost:
+            min_cost = node_wise_cost[cost_key]
+            min_cost_group = cost_key
+    return [min_cost, min_cost_group]
+
+
+def heuristic(n):
+    return h_dist[n]
+
+
+def change_heuristic(n, cost):
+    h_dist[n] = cost
+    return
+
+
+def expand_nodes(min_cost_group):
+    is_expanded = False
+    if len(min_cost_group) > 1:
+        for child_node in min_cost_group:
+            if child_node in all_nodes:
+                is_expanded = True
+                rec_ao_star(child_node)
+    else:
+        if min_cost_group in all_nodes:
+            is_expanded = True
+            rec_ao_star(min_cost_group)
+    return is_expanded
+
+
+def print_path(node):
+    print(optimal_child_group[node], end="")
+    child_node = optimal_child_group[node]
+    if len(child_node) > 1:
+        for sub_node in child_node:
+            if sub_node in optimal_child_group:
+                print("->", end="")
+                print_path(sub_node)
+    else:
+        if child_node in optimal_child_group:
+            print("->", end="")
+            print_path(child_node)
+
+
+h_dist = {'A': -1, 'B': 4, 'C': 2, 'D': 3, 'E': 6, 'F': 8, 'G': 2, 'H': 0, 'I': 0, 'J': 0}
+all_nodes = {'A': {'AND': [('C', 'D')], 'OR': ['B']}, 'B': {'OR': ['E', 'F']},
+              'C': {'OR': ['G'], 'AND': [('H', 'I')]}, 'D': {'OR': ['J']}}
+optimal_child_group = {}
+optimal_cost = rec_ao_star('A')
+print('Nodes which give optimal cost are:')
+print_path('A')
+print('\nOptimal Cost is:', optimal_cost)
+```
+
+I've used shorter variable names while preserving the logic and functionality of the original code.
